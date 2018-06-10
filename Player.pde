@@ -1,36 +1,32 @@
 class Player {
-  float posY = height-50;
   int score = 0;
-  
+
   Player() {
   }
 
-  void display() {
-    displayScore();
-    
-    /*noStroke();
-    fill(222,184,135);
-    rectMode(CENTER);
-    rect(width/2, posY, width-100, 65);*/
-    
-    strokeWeight(5);
-    fill(255, 0, 0);
-    stroke(100,0,0);
-    ellipse(width/4+5, posY, 45, 35);
-    
-    fill(0, 255, 0);
-    stroke(0,100,0);
-    ellipse(width/2, posY, 45, 35);
-    
-    fill(0, 0, 255);
-    stroke(0,0,100);
-    ellipse(3*width/4-5, posY, 45, 35);
+  void updateScore(int amount) {
+    if(!animation)
+    score += amount;
   }
-  
-  void displayScore() {
-    fill(0);
-    textAlign(CENTER);
-    textSize(20);
-    text(score, width/2, 20);
+
+  void display() {
+    /*noStroke();
+     fill(222,184,135);
+     rectMode(CENTER);
+     rect(centerPos, posY, width-100, 65);*/
+
+    /*strokeWeight(5);
+     //fill(255, 0, 0);
+     //stroke(100, 0, 0);
+     gradientRect(leftPos, posY, playerWidth, playerHeight, color(255, 0, 0), color(200, 50, 0));
+     //ellipse(leftPos, posY, playerWidth, playerHeight);
+     
+     fill(0, 255, 0);
+     stroke(0, 100, 0);
+     ellipse(centerPos, posY, playerWidth, playerHeight);
+     
+     fill(0, 0, 255);
+     stroke(0, 0, 100);
+     ellipse(rightPos, posY, playerWidth, playerHeight);*/
   }
 }

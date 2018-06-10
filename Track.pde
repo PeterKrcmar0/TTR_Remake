@@ -6,7 +6,7 @@ class Track {
   ArrayList<Note> notes;
 
   Track(String fileName) {
-    notes = getNotesFromFile(sketchPath("tracks/"+fileName));
+    notes = getNotesFromFile(sketchPath("tracks/"+fileName+".track"));
   }
 
   ArrayList<Note> getNotesFromFile(String fileName) {
@@ -29,7 +29,7 @@ class Track {
           println("woopsie");
           throw new Error();
         }
-        no.add(new Note(o, s.nextInt(), s.nextInt()));
+        no.add(new Note(o, s.nextFloat(), s.nextFloat()));
       }
       s.close();
     } 
@@ -38,5 +38,41 @@ class Track {
     }
     no.sort(new NoteComparator());
     return no;
+  }
+}
+
+// -----------------------
+//   WHEN IN CREATE MODE
+// -----------------------
+
+String trackName = "";
+void createTrack() {
+  if (writer == null) {
+    trackName = "output"+(int)random(10); // TODO: should be able to select custom track name
+    writer = createWriter("tracks/"+trackName+".track"); 
+    notes.clear();
+    currentTime = 0;
+    msgTopCenter = "Creating...";
+  } else {
+    msgTopCenter = "Created track: \""+trackName+"\"";
+    writer.flush();
+    writer.close();
+    writer = null;
+  }
+}
+
+void addNoteToTrack(NOTE_TYPE type) {
+  if (writer != null) {
+    switch(type) {
+    case left:
+      writer.println(new Note(NOTE_TYPE.left, leftLength, currentTime-leftLength));
+      break;
+    case center:
+      writer.println(new Note(NOTE_TYPE.center, centerLength, currentTime-centerLength));
+      break;
+    case right:
+      writer.println(new Note(NOTE_TYPE.right, rightLength, currentTime-rightLength));
+      break;
+    }
   }
 }

@@ -6,10 +6,9 @@ enum NOTE_TYPE {
 
 class Note {
   NOTE_TYPE o;
-  float h;
-  float w;
   float x;
   float posX;
+  float finalX;
   float posY = 0;
   color c;
   float l = 0;
@@ -19,27 +18,28 @@ class Note {
   Note(NOTE_TYPE o, float l, float start) {
     switch(o) {
     case left:
-      posX = width/4+50;
+      posX = leftPos+lineOffset;
+      finalX = leftPos;
       c = color(200, 0, 0);
       s = "L";
       break;
     case center:
-      posX = width/2;
+      posX = centerPos;
+      finalX = centerPos;
       c = color(0, 200, 0);
       s = "C";
       break;
     case right:
-      posX = 3*width/4-50;
+      posX = rightPos-lineOffset;
+      finalX = rightPos;
       c = color(0, 0, 200);
       s = "R";
       break;
     }
-    if(l > 40)
+    if (l > 40)
       this.l = l;
     this.posY = -start;
     this.o = o;
-    this.w = 40;
-    this.h = 30;
     this.s = s+" "+l+" "+start;
   }
 
@@ -48,13 +48,15 @@ class Note {
   }
 
   void display() {
-    fill(selected ? c : color(c, 200));
     noStroke();
-    ellipse(x, posY, w, h);
     if (l != 0) {
       fill(selected ? color(c, 150) : color(c, 100));
-      triangle(x-w/2, posY, f(posY-l), posY-l, x+w/2, posY);
+      triangle(x-noteWidth/2, posY, f(posY-l), posY-l, x+noteWidth/2, posY);
     }
+    fill(color(0));
+    ellipse(x, posY+3, noteWidth, noteHeight);
+    fill(selected ? c : color(c, 200));
+    ellipse(x, posY, noteWidth, noteHeight);
   }
 
   void updatePos() {
@@ -67,11 +69,11 @@ class Note {
   }
 
   float f(float y) {
-    return (posX-width/2)/height*(y) + posX; // x = a*y + b
+    return ((finalX-posX)/height)*(y) + posX; // x = a*y + b
   }
 
   boolean isInsideCircle() {
-    return posY >= player.posY-30 && posY <= player.posY+30;
+    return posY >= playerY-30 && posY <= playerY+30;
   }
 
   boolean isCorrectPressed() {
@@ -85,14 +87,14 @@ class Note {
   String toString() {
     return s;
   }
-  
+
   int compareTo(Note b) {
     return Float.compare(b.posY, posY);
   }
 }
 
-class NoteComparator implements Comparator<Note>{
-  int compare(Note a, Note b){
+class NoteComparator implements Comparator<Note> {
+  int compare(Note a, Note b) {
     return a.compareTo(b);
   }
 }
