@@ -12,6 +12,9 @@ int playerY;
 final int lineOffset = 90;
 int triangleOffset;
 
+int precisionBarHeight = 150;
+int precisionBarWidth = 30;
+
 int leftPos;
 int centerPos;
 int rightPos;
@@ -111,6 +114,7 @@ void drawGUI() {
     //gradientRect(width/2, playerY+3, width, playerHeight, color(255, 0), color(0));
     //side triangles
     drawTriangles();
+    drawPrecisionBar();
     break;
   case create:
     background(255);
@@ -156,6 +160,21 @@ void drawTriangles() {
   endShape();
 }
 
+void drawPrecisionBar() {
+  if (!animation) {
+    noStroke();
+    fill(255, 150);
+    rect(width-precisionBarWidth, precisionBarHeight, precisionBarWidth, precisionBarHeight, precisionBarWidth/2);
+    color c;
+    if (abs(player.lastHit) < maxImprecision/3) c = color(0, 255, 0, 150); // set green if was good
+    else if (abs(player.lastHit) < 2*maxImprecision/3) c = color(255, 150, 0, 150); // set orange if was ok
+    else c = color(255, 0, 0, 150); // set red if was bad
+    fill(c);
+    float y = map(player.lastHit, 0, maxImprecision, 0, precisionBarHeight/2-precisionBarWidth/2);
+    ellipse(width-precisionBarWidth, precisionBarHeight+y, precisionBarWidth-4, precisionBarWidth-4);
+  }
+}
+
 void drawIntro() {
   if (animation) {
     noStroke();
@@ -164,13 +183,12 @@ void drawIntro() {
     textSize(50);
     textAlign(CENTER);
     fill(255);
-    text("TAP\nTAP\nREVENGE", width/2, max(height/2-100, height-animationTime*2));
+    text("TAP\nTAP\nREMAKE", width/2, max(height/2-100, height-animationTime*2));
     blinkMessage(200, 100, "PRESS SPACE", "", width/2, height-100);
   }
 }
 
 void blinkMessage(float start, float freq, String msg1, String msg2, float posX, float posY) {
-  map(freq, 0, freq, 0, 100);
   if (animationTime > start && animationTime%freq > freq/2)
     text(msg1, posX, posY);
   else

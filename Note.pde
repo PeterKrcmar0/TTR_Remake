@@ -22,19 +22,19 @@ class Note {
     case left:
       posX = leftPos+lineOffset;
       finalX = leftPos;
-      c = color(200, 0, 0);
+      c = color(255, 100, 100);
       s = "L";
       break;
     case center:
       posX = centerPos;
       finalX = centerPos;
-      c = color(0, 200, 0);
+      c = color(100, 255, 100);
       s = "C";
       break;
     case right:
       posX = rightPos-lineOffset;
       finalX = rightPos;
-      c = color(0, 0, 200);
+      c = color(100, 100, 255);
       s = "R";
       break;
     }
@@ -77,8 +77,8 @@ class Note {
     return alpha(c) == 0;
   }
 
-  float distToCenter() {
-    return posY-playerY;
+  int distToCenter() {
+    return (int)posY-playerY;
   }
 
   float f(float y) {
@@ -86,7 +86,7 @@ class Note {
   }
 
   boolean isInsideCircle() {
-    return posY >= playerY-30 && posY <= playerY+30;
+    return posY >= playerY-maxImprecision && posY <= playerY+maxImprecision;
   }
 
   boolean isCorrectPressed() {

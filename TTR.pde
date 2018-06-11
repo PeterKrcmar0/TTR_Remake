@@ -8,6 +8,7 @@ MODE currentMode = MODE.play;
 boolean paused = false;
 PrintWriter writer;
 
+int maxImprecision = 30;
 int missed = 0;
 int totalPassed = 0;
 
@@ -83,7 +84,7 @@ void keyPressed() {
       if (currentMode == MODE.create) {
         createTrack();
       } else if (animation) {
-        notes.clear(); //TODO: do dis
+        initNewGame();
         animation = false;
       }
       break;
@@ -167,10 +168,17 @@ void keyReleased() {
   }
 }
 
+void initNewGame() {
+  if (notes!=null) notes.clear();
+  missed = totalPassed = 0;
+  if (player != null) player.lastHit = player.score = 0;
+  currentTime = 0;
+}
+
 Note firstNoteOfKind(NOTE_TYPE type) {
   for (int i = 0; i < notes.size(); ++i) {
     Note n = notes.get(i);
-    if (n.o == type && n.posY < playerY+30)
+    if (n.o == type && n.posY < playerY+maxImprecision)
       return n;
   }
   return null;
@@ -189,7 +197,7 @@ void updateNotes() {
       Note n = notes.get(i);
       n.updatePos();
       // signal a MISS
-      if (!n.missed && n.posY > playerY+30) {
+      if (!n.missed && n.posY > playerY+maxImprecision) {
         n.missed = true;
         msgBottomLeft = "MISS";
         missTimer = 255;
@@ -215,7 +223,7 @@ void updateNotes() {
           totalPassed += 1;
           notes.remove(n);
         } else if (n.canBeSelected() && n.isCorrectPressed() && !n.selected) {
-          player.updateScore(100); // new note -> add 100
+          player.updateLastHit(n.distToCenter()); // new note -> add score according to precision
           n.selected = true;
           updateSelectable(n.o, false);
         } else if (n.isCorrectPressed() && n.selected && alpha(n.c) == 255) {
