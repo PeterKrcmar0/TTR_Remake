@@ -14,6 +14,8 @@ class Note {
   float l = 0;
   boolean selected;
   String s;
+  boolean missed;
+  float start;
 
   Note(NOTE_TYPE o, float l, float start) {
     switch(o) {
@@ -39,33 +41,44 @@ class Note {
     if (l > 40)
       this.l = l;
     this.posY = -start;
+    this.start = start;
     this.o = o;
     this.s = s+" "+l+" "+start;
   }
 
   Note(NOTE_TYPE o, float l) {
-    this(o, l, -l);
+    this(o, l, currentTime-l);
   }
 
   void display() {
     noStroke();
-    if (l != 0) {
+    if (l > 0) {
       fill(selected ? color(c, 150) : color(c, 100));
       triangle(x-noteWidth/2, posY, f(posY-l), posY-l, x+noteWidth/2, posY);
     }
-    fill(color(0));
+    fill(0, 0, 0, alpha(c));
     ellipse(x, posY+3, noteWidth, noteHeight);
-    fill(selected ? c : color(c, 200));
+    fill(selected || isInsideCircle() ? c : color(c, 200));
     ellipse(x, posY, noteWidth, noteHeight);
   }
 
   void updatePos() {
     if (selected) {
       l -= speed;
+      if (l < 0)
+        c = color(red(c), green(c), blue(c), alpha(c)-8*speed);
     } else {
-      posY += speed;
+      posY = currentTime-start;
       x = f(posY);
     }
+  }
+  
+  boolean isFaded(){
+    return alpha(c) == 0;
+  }
+
+  float distToCenter() {
+    return posY-playerY;
   }
 
   float f(float y) {

@@ -4,9 +4,24 @@ import java.util.Comparator;
 
 class Track {
   ArrayList<Note> notes;
+  int totalNotes;
+  float duration;
 
   Track(String fileName) {
     notes = getNotesFromFile(sketchPath("tracks/"+fileName+".track"));
+    totalNotes = notes.size();
+    if (totalNotes > 0){
+      Note n = notes.get(notes.size()-1);
+      duration = -n.posY+n.l+(playerY);
+    }
+  }
+
+  Track() {
+    notes = new ArrayList<Note>();
+  }
+
+  ArrayList<Note> getNotes() {
+    return new ArrayList<Note>(notes);
   }
 
   ArrayList<Note> getNotesFromFile(String fileName) {

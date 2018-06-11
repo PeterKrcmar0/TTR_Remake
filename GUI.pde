@@ -9,7 +9,8 @@ final int playerHeight = 35;
 int playerWidth;
 int playerY;
 
-final int lineOffset = 70;
+final int lineOffset = 90;
+int triangleOffset;
 
 int leftPos;
 int centerPos;
@@ -53,7 +54,7 @@ void drawMessages() {
     msgTopRight = "Time: "+(int)currentTime;
     break;
   case play:
-    //msgTopRight = player.score < 0 ? "u suck" : "lookin gud";
+    msgTopRight = totalPassed == 0 ? 100+" % " : 100*(totalPassed-missed)/totalPassed+" % ";
     break;
   }
   text(msgTopRight, width, 20);
@@ -95,29 +96,26 @@ void drawGUI() {
     //shadow
     gradientRect(width/2, height/4, width, height/2, color(0), color(50, 0));
     //lines
-    stroke(127, 70);
-    strokeWeight(5);
-    line(leftPos+lineOffset, 0, leftPos, height);
-    line(centerPos, 0, centerPos, height);
-    line(rightPos-lineOffset, 0, rightPos, height);
+    drawLines();
     //player
-    gradientRect(leftPos, playerY, playerWidth, playerHeight, color(255, 0, 0, leftPressed ? 255 : 100), color(0));
-    gradientRect(centerPos, playerY, playerWidth, playerHeight, color(0, 255, 0, centerPressed ? 255 : 100), color(0));
-    gradientRect(rightPos, playerY, playerWidth, playerHeight, color(0, 0, 255, rightPressed ? 255 : 100), color(0));
-    //side triangles
+    rectMode(CENTER);
     noStroke();
-    fill(0, 0, 0);
-    triangle(0, 0, leftPos, 0, 0, 2*height);
-    triangle(rightPos, 0, width, 0, width, 2*height);
+    fill(0, 200);
+    rect(width/2, playerY+5, width, playerHeight);
+    fill(190, 0, 0);
+    rect(leftPos, leftPressed ? playerY : playerY-3, playerWidth, playerHeight);
+    fill(0, 190, 0);
+    rect(centerPos, centerPressed ? playerY : playerY-3, playerWidth, playerHeight);
+    fill(0, 0, 190);
+    rect(rightPos, rightPressed ? playerY : playerY-3, playerWidth, playerHeight);
+    //gradientRect(width/2, playerY+3, width, playerHeight, color(255, 0), color(0));
+    //side triangles
+    drawTriangles();
     break;
   case create:
     background(255);
     //lines
-    stroke(127, 70);
-    strokeWeight(5);
-    line(leftPos+lineOffset, 0, leftPos, height);
-    line(centerPos, 0, centerPos, height);
-    line(rightPos-lineOffset, 0, rightPos, height);
+    drawLines();
     //player
     gradientRect(leftPos, playerY, playerWidth, playerHeight, color(255, 0, 0, leftPressed ? 255 : 100), color(0));
     gradientRect(centerPos, playerY, playerWidth, playerHeight, color(0, 255, 0, centerPressed ? 255 : 100), color(0));
@@ -131,11 +129,38 @@ void drawGUI() {
   }
 }
 
+void drawLines() {
+  stroke(127, 70);
+  strokeWeight(5);
+  line(leftPos+lineOffset, 0, leftPos, height);
+  line(centerPos, 0, centerPos, height);
+  line(rightPos-lineOffset, 0, rightPos, height);
+}
+
+void drawTriangles() {
+  noStroke();
+  fill(0);
+  //left triangle
+  beginShape();
+  vertex(0, 0);
+  vertex(leftPos-playerWidth/2+triangleOffset, 0);
+  vertex(leftPos-playerWidth/2, height);
+  vertex(0, height);
+  endShape();
+  //right triangle
+  beginShape();
+  vertex(rightPos+playerWidth/2-triangleOffset, 0);
+  vertex(width, 0);
+  vertex(width, height);
+  vertex(rightPos+playerWidth/2, height);
+  endShape();
+}
+
 void drawIntro() {
   if (animation) {
     noStroke();
     fill(0, 255-animationTime);
-    rect(0, 0, width, height);
+    rect(width/2, height/2, width, height);
     textSize(50);
     textAlign(CENTER);
     fill(255);

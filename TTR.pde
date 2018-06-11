@@ -1,10 +1,15 @@
 Player player;
 //ArrayList<Note> notes = new ArrayList<Note>();
+final Track emptyTrack = new Track();
+Track track;
 ArrayList<Note> notes;
 float speed = 2;
 MODE currentMode = MODE.play;
 boolean paused = false;
 PrintWriter writer;
+
+int missed = 0;
+int totalPassed = 0;
 
 float currentTime = 0;
 boolean animation = true;
@@ -18,6 +23,7 @@ void setup() {
   rightPos = (3*width)/4;
   playerY = height-50;
   playerWidth = centerPos-leftPos;
+  triangleOffset = (int)map(lineOffset, 0, width, 0, height);
   notes = new Track("intro").notes;
 }
 
@@ -34,7 +40,6 @@ void draw() {
     animationTime += speed;
   }
   drawGUI();
-  player.display();
   drawNotes();
   if (!animation)
     drawMessages();
@@ -78,6 +83,7 @@ void keyPressed() {
       if (currentMode == MODE.create) {
         createTrack();
       } else if (animation) {
+        notes.clear(); //TODO: do dis
         animation = false;
       }
       break;
@@ -176,20 +182,23 @@ void updateNotes() {
     //during intro loop on intro nodes
     if (animation && notes.isEmpty()) {
       currentTime = 0;
-      notes.addAll(new Track("intro").notes);
+      notes = new Track("intro").notes;
     }
     // update positions of all nodes
     for (int i = 0; i < notes.size(); ++i) {
       Note n = notes.get(i);
       n.updatePos();
       // signal a MISS
-      if (n.posY > playerY+30) {
+      if (!n.missed && n.posY > playerY+30) {
+        n.missed = true;
         msgBottomLeft = "MISS";
         missTimer = 255;
+        missed += 1;
+        totalPassed += 1;
+        player.updateScore(-50);
       }
       // remove if outside of screen
       if (n.posY-n.l > height) {
-        player.updateScore(-50);
         notes.remove(i);
       }
     }
@@ -202,14 +211,15 @@ void updateNotes() {
     for (int i = 0; i < 3; ++i) {
       Note n = firstNotes.get(i);
       if (n != null && n.isInsideCircle()) {
-        if (n.l < 0 || (n.selected && !n.isCorrectPressed())) { // negative trail or wrong key pressed -> remove
+        if (n.isFaded() || (n.selected && !n.isCorrectPressed() && n.l > 0)) { // done fading or key released -> remove
+          totalPassed += 1;
           notes.remove(n);
         } else if (n.canBeSelected() && n.isCorrectPressed() && !n.selected) {
           player.updateScore(100); // new note -> add 100
           n.selected = true;
           updateSelectable(n.o, false);
-        } else if (n.isCorrectPressed() && n.selected) {
-          player.updateScore(5); // trailing note -> add 5 each frame
+        } else if (n.isCorrectPressed() && n.selected && alpha(n.c) == 255) {
+          player.updateScore((int)speed); // trailing note -> add 5 each frame
         }
       } /*else {
        if (leftSelectable && leftPressed) {
