@@ -115,6 +115,7 @@ void drawGUI() {
     //side triangles
     drawTriangles();
     drawPrecisionBar();
+    drawTrackSelect();
     break;
   case create:
     background(255);
@@ -125,10 +126,7 @@ void drawGUI() {
     gradientRect(centerPos, playerY, playerWidth, playerHeight, color(0, 255, 0, centerPressed ? 255 : 100), color(0));
     gradientRect(rightPos, playerY, playerWidth, playerHeight, color(0, 0, 255, rightPressed ? 255 : 100), color(0));
     //side triangles
-    noStroke();
-    fill(0);
-    triangle(0, 0, leftPos, 0, 0, 2*height);
-    triangle(rightPos, 0, width, 0, width, 2*height);
+    drawTriangles();
     break;
   }
 }
@@ -173,26 +171,6 @@ void drawPrecisionBar() {
     float y = map(player.lastHit, 0, maxImprecision, 0, precisionBarHeight/2-precisionBarWidth/2);
     ellipse(width-precisionBarWidth, precisionBarHeight+y, precisionBarWidth-4, precisionBarWidth-4);
   }
-}
-
-void drawIntro() {
-  if (animation) {
-    noStroke();
-    fill(0, 255-animationTime);
-    rect(width/2, height/2, width, height);
-    textSize(50);
-    textAlign(CENTER);
-    fill(255);
-    text("TAP\nTAP\nREMAKE", width/2, max(height/2-100, height-animationTime*2));
-    blinkMessage(200, 100, "PRESS SPACE", "", width/2, height-100);
-  }
-}
-
-void blinkMessage(float start, float freq, String msg1, String msg2, float posX, float posY) {
-  if (animationTime > start && animationTime%freq > freq/2)
-    text(msg1, posX, posY);
-  else
-    text(msg2, posX, posY);
 }
 
 void gradientRect(int x, int y, int w, int h, color c1, color c2) {

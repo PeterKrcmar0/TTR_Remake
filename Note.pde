@@ -74,7 +74,7 @@ class Note {
   }
   
   boolean isFaded(){
-    return alpha(c) == 0;
+    return alpha(this.c) == 0.0;
   }
 
   int distToCenter() {
