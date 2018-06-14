@@ -7,31 +7,27 @@ int trackSelectHeight = 100;
 int trackSelectWidth = 400;
 int trackSelectOffset = 50;
 
-boolean inTrackSelect = false;
-
 void drawTrackSelect() {
-  if (inTrackSelect) {
-    for (int i = 0; i < tracks.size(); ++i) {
-      Track t = tracks.get(i);
-      noStroke();
-      //rectMode(CENTER);
-      float y = trackSelectOffset+(trackSelectHeight+10)*(i+1);
-      boolean b = mouseInsideRect(width/2, y, trackSelectWidth, trackSelectHeight);
-      fill(255, b ? 220 : 180);
-      rect(width/2, y, trackSelectWidth, trackSelectHeight);
-      textSize(20);
-      textAlign(LEFT);
-      fill(0);
-      text(t.name, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+20);
-      text("Total notes: "+t.totalNotes, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+50);
-      text("Duration: "+t.duration, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+70);
-      text("Max score: "+t.maxScore, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+90);
-      if (b && mousePressed && mouseButton == LEFT) {
-        reset();
-        currentTrack = t;
-        notes = t.getNotes();
-        inTrackSelect = false;
-      }
+  for (int i = 0; i < tracks.size(); ++i) {
+    Track t = tracks.get(i);
+    noStroke();
+    //rectMode(CENTER);
+    float y = trackSelectOffset+(trackSelectHeight+10)*(i+1);
+    boolean b = mouseInsideRect(width/2, y, trackSelectWidth, trackSelectHeight);
+    fill(255, b ? 220 : 180);
+    rect(width/2, y, trackSelectWidth, trackSelectHeight);
+    textSize(20);
+    textAlign(LEFT);
+    fill(0);
+    text(t.name, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+20);
+    text("Total notes: "+t.totalNotes, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+50);
+    text("Duration: "+t.duration, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+70);
+    text("Max score: "+t.maxScore, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+90);
+    if (b && mousePressed && mouseButton == LEFT) {
+      reset();
+      currentTrack = t;
+      notes = t.getNotes();
+      currentMode = MODE.play;
     }
   }
 }
@@ -50,6 +46,10 @@ boolean mouseInsideRect(float centerX, float centerY, float w, float h) {
 }
 
 void mouseWheel(MouseEvent e) {
-  if (inTrackSelect)
-    trackSelectOffset -= e.getCount()*50;
+  if (currentMode == MODE.menu)
+    trackSelectOffset = limit(trackSelectOffset-e.getCount()*50, -(tracks.size())*(trackSelectHeight+10), 50);
+}
+
+int limit(int val, int min, int max) {
+  return max(min(max, val), min);
 }

@@ -17,3 +17,7 @@ void blinkMessage(float start, float freq, String msg1, String msg2, float posX,
   else
     text(msg2, posX, posY);
 }
+
+void blinkMessage(float freq, String msg1, String msg2, float posX, float posY) {
+  blinkMessage(-1, freq, msg1, msg2, posX, posY);
+}

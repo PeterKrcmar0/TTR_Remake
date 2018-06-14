@@ -32,6 +32,8 @@ void drawMessages() {
     fill(255);
     msgTopCenter = Integer.toString(player.score);
     break;
+  case menu:
+    break;
   }
   text(msgTopCenter, width/2, 20);
 
@@ -46,6 +48,8 @@ void drawMessages() {
   case play:
     msgTopLeft = "";
     break;
+  case menu:
+    break;
   }
   text(msgTopLeft, 0, 20);
 
@@ -59,6 +63,8 @@ void drawMessages() {
   case play:
     msgTopRight = totalPassed == 0 ? 100+" % " : 100*(totalPassed-missed)/totalPassed+" % ";
     break;
+  case menu:
+    break;
   }
   text(msgTopRight, width, 20);
 
@@ -68,10 +74,13 @@ void drawMessages() {
   textAlign(LEFT);
   switch(currentMode) {
   case create:
-    //msgBottomLeft = "";
+    msgBottomLeft = "";
     break;
   case play:
     //msgBottomLeft = "";
+    break;
+  case menu:
+    msgBottomLeft = "";
     break;
   }
   text(msgBottomLeft, 0, playerY);
@@ -86,6 +95,8 @@ void drawMessages() {
   case play:
     fill(255);
     break;
+  case menu:
+    break;
   }
   msgCenter = paused ? "PAUSED" : "";
   text(msgCenter, width/2, height/2);
@@ -95,40 +106,59 @@ void drawGUI() {
   switch(currentMode) {
   case play:
     background(222, 184, 135);
-
     //shadow
     gradientRect(width/2, height/4, width, height/2, color(0), color(50, 0));
     //lines
     drawLines();
     //player
-    rectMode(CENTER);
-    noStroke();
-    fill(0, 200);
-    rect(width/2, playerY+5, width, playerHeight);
-    fill(190, 0, 0);
-    rect(leftPos, leftPressed ? playerY : playerY-3, playerWidth, playerHeight);
-    fill(0, 190, 0);
-    rect(centerPos, centerPressed ? playerY : playerY-3, playerWidth, playerHeight);
-    fill(0, 0, 190);
-    rect(rightPos, rightPressed ? playerY : playerY-3, playerWidth, playerHeight);
-    //gradientRect(width/2, playerY+3, width, playerHeight, color(255, 0), color(0));
+    drawPlayer();
     //side triangles
     drawTriangles();
     drawPrecisionBar();
-    drawTrackSelect();
     break;
   case create:
     background(255);
     //lines
     drawLines();
     //player
-    gradientRect(leftPos, playerY, playerWidth, playerHeight, color(255, 0, 0, leftPressed ? 255 : 100), color(0));
-    gradientRect(centerPos, playerY, playerWidth, playerHeight, color(0, 255, 0, centerPressed ? 255 : 100), color(0));
-    gradientRect(rightPos, playerY, playerWidth, playerHeight, color(0, 0, 255, rightPressed ? 255 : 100), color(0));
+    drawPlayer();
     //side triangles
     drawTriangles();
+    inputBox();
+    break;
+  case menu:
+    background(222, 184, 135);
+    //shadow
+    gradientRect(width/2, height/4, width, height/2, color(0), color(50, 0));
+    //lines
+    drawLines();
+    //player
+    drawPlayer();
+    //side triangles
+    drawTriangles();
+    drawTrackSelect();
+    createModeButton();
     break;
   }
+}
+
+void drawPlayer() {
+  rectMode(CENTER);
+  noStroke();
+  fill(0, 200);
+  rect(width/2, playerY+5, width, playerHeight);
+  fill(190, 0, 0);
+  rect(leftPos, leftPressed ? playerY : playerY-3, playerWidth, playerHeight);
+  fill(0, 190, 0);
+  rect(centerPos, centerPressed ? playerY : playerY-3, playerWidth, playerHeight);
+  fill(0, 0, 190);
+  rect(rightPos, rightPressed ? playerY : playerY-3, playerWidth, playerHeight);
+
+  /* OTHER VERSION
+   gradientRect(leftPos, playerY, playerWidth, playerHeight, color(255, 0, 0, leftPressed ? 255 : 100), color(0));
+   gradientRect(centerPos, playerY, playerWidth, playerHeight, color(0, 255, 0, centerPressed ? 255 : 100), color(0));
+   gradientRect(rightPos, playerY, playerWidth, playerHeight, color(0, 0, 255, rightPressed ? 255 : 100), color(0));
+   */
 }
 
 void drawLines() {

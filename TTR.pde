@@ -4,7 +4,7 @@ final Track emptyTrack = new Track();
 Track currentTrack;
 ArrayList<Note> notes;
 float speed = 2;
-MODE currentMode = MODE.play;
+MODE currentMode = MODE.menu;
 boolean paused = false;
 PrintWriter writer;
 
@@ -31,7 +31,8 @@ void setup() {
 
 enum MODE {
   create, 
-    play
+    play, 
+    menu
 }
 
 void draw() {
@@ -44,11 +45,9 @@ void draw() {
   }
   drawGUI();
   drawNotes();
-  inputBox();
-  if (!animation)
-    drawMessages();
+  drawMessages();
   drawIntro(); //if animation
-  if (currentTrack != null && currentTime > currentTrack.duration && !inTrackSelect)
+  if (currentTrack != null && currentTime > currentTrack.duration && currentMode == MODE.play)
     goToMenu();
 }
 
@@ -83,16 +82,22 @@ void keyPressed() {
 
     case SHIFT:
       if (!animation)
-        switchMode();
+        toggleCreateMode();
       break;
     case ' ':
-      if (currentMode == MODE.create) {
+      switch(currentMode) {
+      case create:
         if (!inputing && creating)
           inputing = true;
         creating = !creating;
         createTrack();
-      } else if (animation) {
-        goToMenu();
+        break;
+      case menu:
+        if (animation)
+          goToMenu();
+        break;
+      case play:
+        break;
       }
       break;
 
@@ -145,21 +150,21 @@ void keyReleased() {
   if (!paused) {
     switch(keyCode) {
     case 'Q':
-      if (qPressed && !inputing && !inTrackSelect) {
+      if (qPressed && !inputing && currentMode != MODE.menu) {
         notes.add(new Note(NOTE_TYPE.left, leftLength));
         addNoteToTrack(NOTE_TYPE.left);
         qPressed = false;
       }
       break;
     case 'W':
-      if (wPressed && !inputing && !inTrackSelect) {
+      if (wPressed && !inputing && currentMode != MODE.menu) {
         notes.add(new Note(NOTE_TYPE.center, centerLength));
         addNoteToTrack(NOTE_TYPE.center);
         wPressed = false;
       }
       break;
     case'E':
-      if (ePressed && !inputing && !inTrackSelect) {
+      if (ePressed && !inputing && currentMode != MODE.menu) {
         notes.add(new Note(NOTE_TYPE.right, rightLength));
         addNoteToTrack(NOTE_TYPE.right);
         ePressed = false;
@@ -185,11 +190,11 @@ void keyReleased() {
 void goToMenu() {
   reset();
   tracks.clear();
-  for(String s : trackToAdd)
+  for (String s : trackToAdd)
     addTrack(s);
-    trackSelectOffset = 50;
+  trackSelectOffset = 50;
   animation = false;
-  inTrackSelect = true;
+  currentMode = MODE.menu;
 }
 
 void reset() {
@@ -216,7 +221,7 @@ void updateNotes() {
     //during intro loop on intro nodes
     if (animation && notes.isEmpty()) {
       currentTime = 0;
-      notes = new Track("intro").notes;
+      notes = new Track("intro.track").notes;
     }
     // update positions of all nodes
     for (int i = 0; i < notes.size(); ++i) {
@@ -253,7 +258,7 @@ void updateNotes() {
           totalPassed += 1;
           updateSelectable(n.o, false);
         } else if (n.isCorrectPressed() && n.selected && alpha(n.c) == 255) {
-          player.updateScore((int)speed); // trailing note -> add 2 each frame
+          player.updateScore((int)speed); // trailing note -> add ´speed´ each frame
         }
       } /*else {
        if (leftSelectable && leftPressed) {
@@ -290,12 +295,16 @@ void drawNotes() {
     notes.get(i).display();
 }
 
-void switchMode() {
-  if (currentMode == MODE.play) {
-    currentMode = MODE.create;
+void toggleCreateMode() {
+  switch(currentMode) {
+  case menu:
     msgTopCenter = "";
-  } else{
+    currentMode = MODE.create;
+    break;
+  case play:
+    break;
+  case create:
     goToMenu();
-    currentMode = MODE.play;
+    break;
   }
 }
