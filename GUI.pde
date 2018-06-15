@@ -23,18 +23,15 @@ void drawMessages() {
   //TOP CENTER
   textSize(20);
   textAlign(CENTER, TOP);
+  fill(255);
   switch(currentMode) {
   case create:
-    fill(0);
     //msgTopCenter = "";
     break;
   case play:
-    fill(255);
     msgTopCenter = Integer.toString(player.score);
     break;
   case menu:
-    gradientRect(width/2, height/6, width, height/3, color(0), color(50, 0));
-    fill(255);
     if (!animation) {
       textSize(50);
       msgTopCenter = "SELECT TRACK";
@@ -116,35 +113,33 @@ void drawGUI() {
   switch(currentMode) {
   case play:
     background(222, 184, 135);
-    //shadow
-    gradientRect(width/2, height/4, width, height/2, color(0), color(50, 0));
-    //lines
-    drawLines();
-    //player
-    drawPlayer();
-    //side triangles
-    drawTriangles();
-    drawPrecisionBar();
+    drawLines(); //lines
+    drawPlayer(); //player
+    drawNotes(); //notes 
+    gradientRect(width/2, height/4, width, height/2, color(0), color(50, 0)); //shadow
+    drawTriangles(); //side triangles
+    drawMessages(); //messages
+    drawPrecisionBar(); //precision bar
     break;
   case create:
-    background(255);
-    //lines
-    drawLines();
-    //player
-    drawPlayer();
-    //side triangles
-    drawTriangles();
-    inputBox();
+    background(255);    
+    drawLines(); //lines   
+    drawPlayer(); //player
+    drawNotes(); //notes
+    gradientRect(width/2, height/4, width, height/2, color(0), color(50, 0)); //shadow
+    drawTriangles(); //side triangles
+    drawMessages(); //messages
+    inputBox(); //input box
     break;
   case menu:
     background(222, 184, 135);
-    //lines
-    drawLines();
-    //player
-    drawPlayer();
-    //side triangles
-    drawTriangles();
-    drawMenu();
+    drawLines(); //lines   
+    drawPlayer(); //player
+    drawNotes(); //notes
+    drawTriangles(); //side triangles
+    drawMenu(); //track boxes
+    gradientRect(width/2, height/6, width, height/3, color(0), color(50, 0)); //shadow
+    drawMessages(); //messages
     break;
   }
 }

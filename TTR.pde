@@ -45,8 +45,6 @@ void draw() {
       animationTime += speed;
   }
   drawGUI();
-  drawNotes();
-  drawMessages();
   drawIntro(); //if animation
   if (currentTrack != null && currentTime > currentTrack.duration && currentMode == MODE.play)
     goToMenu();
@@ -215,7 +213,7 @@ void goToMenu() {
   tracks.clear();
   for (String s : trackToAdd) //add all tracks to menu
     addTrack(s);
-  addTrack((Track)null); //adding ´create new track´ box
+  tracks.add(new TrackBox(tracks.size())); //adding ´create new track´ box
   trackSelectOffset = classicOffset; // reset scroll offset
   animation = false;
   currentMode = MODE.menu;

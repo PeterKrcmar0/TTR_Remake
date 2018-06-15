@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.io.FileReader;
 import java.util.Comparator;
+import java.util.Collections;
 
 class Track {
   ArrayList<Note> notes;
@@ -79,15 +80,21 @@ void createTrack() {
     if (inputing) {
       trackName = "";
     } else {
-      writer = createWriter("tracks/"+trackName+".track"); 
-      writer.println(trackName);
-      for (Note n : newTrackNotes)
-        writer.println(n);
-      msgTopCenter = "Created track: \""+trackName+"\"";
-      trackToAdd.add(trackName+".track");
-      writer.flush();
-      writer.close();
-      writer = null;
+      if (newTrackNotes.isEmpty())
+        msgTopCenter = "Track was empty !";
+      else {
+        writer = createWriter("tracks/"+trackName+".track"); 
+        writer.println(trackName);
+        for (Note n : newTrackNotes)
+          writer.println(n);
+        msgTopCenter = "Created track: \""+trackName+"\"";
+        if (!trackToAdd.contains(trackName+".track"))
+          trackToAdd.add(trackName+".track");
+        Collections.sort(trackToAdd);
+        writer.flush();
+        writer.close();
+        writer = null;
+      }
     }
   }
 }
