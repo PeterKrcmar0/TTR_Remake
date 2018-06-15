@@ -27,7 +27,7 @@ class TrackBox {
     fill(255, isSelected() ? 255 : 150);
     rectMode(CENTER);
     rect(x, y, w, h);
-    lightGreen = color(0, green(lightGreen), 0, min(alpha(lightGreen)+(isSelected() ? 4*speed : -8*speed), 150));
+    lightGreen = color(0, green(lightGreen), 0, min(alpha(lightGreen)+(isSelected() ? 4*speed : -255), 150));
     w = limit((int)(w+(isSelected() ? speed : -2*speed)), trackSelectWidth, trackSelectWidth+10);
     fill(lightGreen);
     if (t == null) {

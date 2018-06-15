@@ -13,7 +13,10 @@ class Player {
   }
   
   void updateLastHit(int distance) {
-    int newScore = maxHit-abs((int)map(distance, 0, maxImprecision, 0, player.maxHit));
+    int newScore;
+    if(abs(distance) < maxImprecision/3) newScore = maxHit; // if green get 100% of points
+    else if(abs(distance) < 2*maxImprecision/3) newScore = 8*maxHit/10; // if orange get 80%
+    else newScore = 6*maxHit/10; // if red get 60%
     updateScore(newScore);
     lastHit = distance;
   }
