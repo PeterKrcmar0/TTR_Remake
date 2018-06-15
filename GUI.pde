@@ -22,7 +22,7 @@ int rightPos;
 void drawMessages() {
   //TOP CENTER
   textSize(20);
-  textAlign(CENTER);
+  textAlign(CENTER, TOP);
   switch(currentMode) {
   case create:
     fill(0);
@@ -33,14 +33,22 @@ void drawMessages() {
     msgTopCenter = Integer.toString(player.score);
     break;
   case menu:
+    gradientRect(width/2, height/6, width, height/3, color(0), color(50, 0));
+    fill(255);
+    if (!animation) {
+      textSize(50);
+      msgTopCenter = "SELECT TRACK";
+    } else {
+      msgTopCenter = "";
+    }
     break;
   }
-  text(msgTopCenter, width/2, 20);
+  text(msgTopCenter, width/2, 0);
 
   fill(255);
   //TOP LEFT
   textSize(20);
-  textAlign(LEFT);
+  textAlign(LEFT, TOP);
   switch(currentMode) {
   case create:
     msgTopLeft = "CREATE MODE";
@@ -49,13 +57,14 @@ void drawMessages() {
     msgTopLeft = "";
     break;
   case menu:
+    msgTopLeft = "";
     break;
   }
-  text(msgTopLeft, 0, 20);
+  text(msgTopLeft, 0, 0);
 
   //TOP RIGHT
   textSize(20);
-  textAlign(RIGHT);
+  textAlign(RIGHT, TOP);
   switch(currentMode) {
   case create:
     msgTopRight = "Time: "+(int)currentTime;
@@ -64,9 +73,10 @@ void drawMessages() {
     msgTopRight = totalPassed == 0 ? 100+" % " : 100*(totalPassed-missed)/totalPassed+" % ";
     break;
   case menu:
+    msgTopRight = "";
     break;
   }
-  text(msgTopRight, width, 20);
+  text(msgTopRight, width, 0);
 
   //BOTTOM LEFT
   fill(255, missTimer-=2*speed);
@@ -128,16 +138,13 @@ void drawGUI() {
     break;
   case menu:
     background(222, 184, 135);
-    //shadow
-    gradientRect(width/2, height/4, width, height/2, color(0), color(50, 0));
     //lines
     drawLines();
     //player
     drawPlayer();
     //side triangles
     drawTriangles();
-    drawTrackSelect();
-    createModeButton();
+    drawMenu();
     break;
   }
 }
@@ -192,14 +199,14 @@ void drawPrecisionBar() {
   if (!animation) {
     noStroke();
     fill(255, 150);
-    rect(width-precisionBarWidth, precisionBarHeight, precisionBarWidth, precisionBarHeight, precisionBarWidth/2);
+    rect(width-precisionBarWidth, height/2, precisionBarWidth, precisionBarHeight, precisionBarWidth/2);
     color c;
     if (abs(player.lastHit) < maxImprecision/3) c = color(0, 255, 0, 150); // set green if was good
     else if (abs(player.lastHit) < 2*maxImprecision/3) c = color(255, 150, 0, 150); // set orange if was ok
     else c = color(255, 0, 0, 150); // set red if was bad
     fill(c);
     float y = map(player.lastHit, 0, maxImprecision, 0, precisionBarHeight/2-precisionBarWidth/2);
-    ellipse(width-precisionBarWidth, precisionBarHeight+y, precisionBarWidth-4, precisionBarWidth-4);
+    ellipse(width-precisionBarWidth, height/2+y, precisionBarWidth-4, precisionBarWidth-4);
   }
 }
 

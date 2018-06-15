@@ -84,7 +84,7 @@ void createTrack() {
       for (Note n : newTrackNotes)
         writer.println(n);
       msgTopCenter = "Created track: \""+trackName+"\"";
-      //trackToAdd.add(trackName);
+      trackToAdd.add("\""+trackName+"\"");
       writer.flush();
       writer.close();
       writer = null;

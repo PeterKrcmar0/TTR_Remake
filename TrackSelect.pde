@@ -1,44 +1,33 @@
 import java.util.Arrays;
 
-ArrayList<Track> tracks = new ArrayList<Track>();
+ArrayList<TrackBox> tracks = new ArrayList<TrackBox>();
 ArrayList<String> trackToAdd;
 
+final int classicOffset = 200;
 int trackSelectHeight = 100;
 int trackSelectWidth = 400;
-int trackSelectOffset = 50;
+int trackSelectOffset = classicOffset;
+int trackSelectSpace = 10;
 
-void drawTrackSelect() {
-  for (int i = 0; i < tracks.size(); ++i) {
-    Track t = tracks.get(i);
-    noStroke();
-    //rectMode(CENTER);
-    float y = trackSelectOffset+(trackSelectHeight+10)*(i+1);
-    boolean b = mouseInsideRect(width/2, y, trackSelectWidth, trackSelectHeight);
-    fill(255, b ? 220 : 180);
-    rect(width/2, y, trackSelectWidth, trackSelectHeight);
-    textSize(20);
-    textAlign(LEFT);
-    fill(0);
-    text(t.name, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+20);
-    text("Total notes: "+t.totalNotes, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+50);
-    text("Duration: "+t.duration, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+70);
-    text("Max score: "+t.maxScore, width/2-trackSelectWidth/2+10, y-trackSelectHeight/2+90);
-    if (b && mousePressed && mouseButton == LEFT) {
-      reset();
-      currentTrack = t;
-      notes = t.getNotes();
-      currentMode = MODE.play;
-    }
+void drawMenu() {
+  for (TrackBox tb : tracks) {
+    tb.display();
   }
 }
 
 void addTrack(Track t) {
-  if (t.totalNotes != 0)
-    tracks.add(t);
+  if (t == null)
+    tracks.add(new TrackBox(t, tracks.size()));
+  else if (t.totalNotes != 0)
+    tracks.add(new TrackBox(t, tracks.size()));
 }
 
 void addTrack(String name) {
   addTrack(new Track(name));
+}
+
+boolean mouseInsideRectCorner(float x, float y, float w, float h) {
+  return mouseX >= x && mouseX <= x+w && mouseY >= y && mouseY <= y+h;
 }
 
 boolean mouseInsideRect(float centerX, float centerY, float w, float h) {
@@ -46,8 +35,10 @@ boolean mouseInsideRect(float centerX, float centerY, float w, float h) {
 }
 
 void mouseWheel(MouseEvent e) {
-  if (currentMode == MODE.menu)
-    trackSelectOffset = limit(trackSelectOffset-e.getCount()*50, -(tracks.size())*(trackSelectHeight+10), 50);
+  /* if you want scrolling
+   if (currentMode == MODE.menu)
+   trackSelectOffset = limit(trackSelectOffset-e.getCount()*50, -(tracks.size())*(trackSelectHeight+10), classicOffset); 
+   */
 }
 
 int limit(int val, int min, int max) {

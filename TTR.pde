@@ -18,6 +18,7 @@ float animationTime = 0;
 
 void setup() {
   size(600, 800, P2D);
+  textMode(SHAPE);
   player = new Player();
   leftPos = width/4;
   centerPos = width/2;
@@ -87,10 +88,12 @@ void keyPressed() {
     case ' ':
       switch(currentMode) {
       case create:
-        if (!inputing && creating)
-          inputing = true;
-        creating = !creating;
-        createTrack();
+        if (!inputing) {
+          if (creating)
+            inputing = true;
+          creating = !creating;
+          createTrack();
+        }
         break;
       case menu:
         if (animation)
@@ -108,9 +111,19 @@ void keyPressed() {
 
     case RETURN :
     case ENTER :
-      if (inputing) {
-        inputing = false;
-        createTrack();
+      switch(currentMode) {
+      case create:
+        if (inputing) {
+          inputing = false;
+          createTrack();
+        }
+        break;
+      case menu:
+        for (TrackBox t : tracks)
+          t.keyPressed();
+        break;
+      case play:
+        break;
       }
       break;
 
@@ -130,10 +143,17 @@ void keyPressed() {
       leftPressed = true;
       break;
     case DOWN:
-      centerPressed = true;
+      if (currentMode == MODE.menu)
+        findSelectedTrackBoxAndUpdate(true);
+      else
+        centerPressed = true;
       break;
     case RIGHT:
       rightPressed = true;
+      break;
+    case UP:
+      if (currentMode == MODE.menu)
+        findSelectedTrackBoxAndUpdate(false);
       break;
 
     case 'F':
@@ -147,52 +167,56 @@ void keyPressed() {
 }
 
 void keyReleased() {
-  if (!paused) {
-    switch(keyCode) {
-    case 'Q':
-      if (qPressed && !inputing && currentMode != MODE.menu) {
-        notes.add(new Note(NOTE_TYPE.left, leftLength));
-        addNoteToTrack(NOTE_TYPE.left);
-        qPressed = false;
-      }
-      break;
-    case 'W':
-      if (wPressed && !inputing && currentMode != MODE.menu) {
-        notes.add(new Note(NOTE_TYPE.center, centerLength));
-        addNoteToTrack(NOTE_TYPE.center);
-        wPressed = false;
-      }
-      break;
-    case'E':
-      if (ePressed && !inputing && currentMode != MODE.menu) {
-        notes.add(new Note(NOTE_TYPE.right, rightLength));
-        addNoteToTrack(NOTE_TYPE.right);
-        ePressed = false;
-      }
-      break;
-
-    case LEFT:
-      leftPressed = false;
-      leftSelectable = true;
-      break;
-    case DOWN:
-      centerPressed = false;
-      centerSelectable = true;
-      break;
-    case RIGHT:
-      rightPressed = false;
-      rightSelectable = true;
-      break;
+  switch(keyCode) {
+  case 'Q':
+    if (qPressed && !inputing && currentMode != MODE.menu) {
+      notes.add(new Note(NOTE_TYPE.left, leftLength));
+      addNoteToTrack(NOTE_TYPE.left);
+      qPressed = false;
     }
+    break;
+  case 'W':
+    if (wPressed && !inputing && currentMode != MODE.menu) {
+      notes.add(new Note(NOTE_TYPE.center, centerLength));
+      addNoteToTrack(NOTE_TYPE.center);
+      wPressed = false;
+    }
+    break;
+  case'E':
+    if (ePressed && !inputing && currentMode != MODE.menu) {
+      notes.add(new Note(NOTE_TYPE.right, rightLength));
+      addNoteToTrack(NOTE_TYPE.right);
+      ePressed = false;
+    }
+    break;
+
+  case LEFT:
+    leftPressed = false;
+    leftSelectable = true;
+    break;
+  case DOWN:
+    centerPressed = false;
+    centerSelectable = true;
+    break;
+  case RIGHT:
+    rightPressed = false;
+    rightSelectable = true;
+    break;
   }
+}
+
+void mousePressed() {
+  for (TrackBox t : tracks)
+    t.mousePressed();
 }
 
 void goToMenu() {
   reset();
   tracks.clear();
-  for (String s : trackToAdd)
+  for (String s : trackToAdd) //add all tracks to menu
     addTrack(s);
-  trackSelectOffset = 50;
+  addTrack((Track)null); //adding ´create new track´ box
+  trackSelectOffset = classicOffset; // reset scroll offset
   animation = false;
   currentMode = MODE.menu;
 }
