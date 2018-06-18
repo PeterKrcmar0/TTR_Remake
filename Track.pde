@@ -14,7 +14,7 @@ class Track {
     notes = getInfoFromFile(sketchPath("tracks\\"+fileName));
     totalNotes = notes.size();
     for (Note n : notes) {
-      maxScore += player.maxHit + n.l*speed;
+      maxScore += player.maxHit + n.l;
     }
     if (totalNotes > 0) {
       Note n = notes.get(notes.size()-1);
@@ -79,6 +79,8 @@ void createTrack() {
   } else {
     if (inputing) {
       trackName = "";
+      msgTopCenter = "Naming...";
+      println("reseting name. name: _"+trackName+"_");
     } else {
       if (newTrackNotes.isEmpty())
         msgTopCenter = "Track was empty !";

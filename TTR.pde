@@ -71,8 +71,13 @@ boolean centerSelectable = true;
 boolean rightSelectable = true;
 
 void keyPressed() {
+  if (inputing) {
+    typingKey();
+    return;
+  }
+
   if (keyCode == 'P') {
-    if (!animation && !inputing)
+    if (!animation)
       paused = !paused;
   }
 
@@ -80,7 +85,7 @@ void keyPressed() {
     switch(keyCode) {
 
     case SHIFT:
-      if (!animation)
+      if (!animation && !inputing)
         toggleCreateMode();
       break;
     case ' ':
@@ -102,27 +107,11 @@ void keyPressed() {
       }
       break;
 
-    case BACKSPACE:
-      if (inputing)
-        trackName = trackName.substring(0, max(0, trackName.length()-1));
-      break;
-
     case RETURN :
     case ENTER :
-      switch(currentMode) {
-      case create:
-        if (inputing) {
-          inputing = false;
-          createTrack();
-        }
-        break;
-      case menu:
+      if (currentMode == MODE.menu)
         for (TrackBox t : tracks)
           t.keyPressed();
-        break;
-      case play:
-        break;
-      }
       break;
 
     case 'Q':

@@ -103,7 +103,7 @@ void findSelectedTrackBoxAndUpdate(boolean down) {
       int newI = limit(i+(down?1:-1), 0, tracks.size()-1);
       TrackBox t = tracks.get(newI);
       t.selected = true;
-      if(t != curr /*&& (t.y+trackSelectOffset > playerY || t.y+trackSelectOffset < 50)*/) trackSelectOffset -= (down ? 1 : -1)*(trackSelectHeight+trackSelectSpace);
+      if (t != curr /*&& (t.y+trackSelectOffset > playerY || t.y+trackSelectOffset < 50)*/) trackSelectOffset -= (down ? 1 : -1)*(trackSelectHeight+trackSelectSpace);
       break;
     }
   }
@@ -112,6 +112,56 @@ void findSelectedTrackBoxAndUpdate(boolean down) {
 boolean inputing = false;
 
 float createModeButtonR = 50;
+
+void inputBox() {
+  if (inputing) {
+    fill(0, 150);
+    rect(width/2, height/2, trackSelectWidth, trackSelectHeight);
+    fill(255);
+    textSize(30);
+    textAlign(LEFT, CENTER);
+    text("Name:\n"+trackName+blink(), width/2-trackSelectWidth/2, height/2-textDescent());
+  }
+}
+
+String blink() {
+  return currentTime%100 > 50 ? " " : "_";
+}
+
+void typingKey() {
+  if (inputing && trackName.length() < 25) {
+    if (key == CODED) {
+      key = 0;
+    } else {
+      switch(key) {
+      case BACKSPACE:
+        trackName = trackName.substring(0, max(0, trackName.length()-1));
+        break;
+      case RETURN :
+      case ENTER :
+        inputing = false;
+        createTrack();
+        break;
+      case DELETE :
+        trackName = "";
+        break;
+      case TAB :
+        trackName += "    ";
+        break;
+      default:
+        trackName += key;
+      }
+    }
+  }
+}
+
+//for circles
+boolean isFocused(float centerX, float centerY, float r) {
+  float dX = mouseX-centerX;
+  float dY = mouseY-centerY;
+  return sqrt((dX*dX)+(dY*dY)) <= r;
+}
+
 
 /*void createModeButton() {
  if (!animation) {
@@ -131,29 +181,3 @@ float createModeButtonR = 50;
  toggleCreateMode();
  }
  }*/
-
-void inputBox() {
-  if (inputing) {
-    fill(0, 150);
-    rect(width/2, height/2, trackSelectWidth, trackSelectHeight);
-    fill(255);
-    textSize(30);
-    textAlign(LEFT);
-    text("Name:", width/2-trackSelectWidth/2, height/2);
-    textAlign(RIGHT);
-    text(trackName, width/2+trackSelectWidth/2, height/2);
-  }
-}
-
-void keyTyped() {
-  if (inputing && trackName.length() < 20) {
-    println("_"+key+"_");
-    trackName += key;
-  }
-}
-
-boolean isFocused(float centerX, float centerY, float r) {
-  float dX = mouseX-centerX;
-  float dY = mouseY-centerY;
-  return sqrt((dX*dX)+(dY*dY)) <= r;
-}

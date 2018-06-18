@@ -9,7 +9,7 @@ final int playerHeight = 35;
 int playerWidth;
 int playerY;
 
-final int lineOffset = 90;
+final int lineOffset = 150;
 int triangleOffset;
 
 int precisionBarHeight = 150;
@@ -138,7 +138,7 @@ void drawGUI() {
     drawNotes(); //notes
     drawTriangles(); //side triangles
     drawMenu(); //track boxes
-    gradientRect(width/2, height/6, width, height/3, color(0), color(50, 0)); //shadow
+    gradientRect(width/2, height/6, width, height/3, color(0), color(50, 0)); //shadow (shorter)
     drawMessages(); //messages
     break;
   }
