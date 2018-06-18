@@ -1,5 +1,5 @@
 # ignore all tracks
-tracks/
+tracks/*
 
 # except intro track
 !tracks/intro.track
